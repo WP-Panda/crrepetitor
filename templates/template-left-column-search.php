@@ -26,8 +26,8 @@ $city_district = $panda['city_district'] ? $panda['city_district'] : array();
                     if( $categories ){
                         foreach( $categories as $cat ){
                             if( $cat->category_parent !== 0 )
-                                $selected = ( !empty($_POST['lesson']) && $cat->name == $_POST['lesson'] ) ? ' selected="selected"' : '';
-                                echo '<option value="' . $cat->cat_ID . '"'. $selected .'>' . upFirstLetter($cat->name) .'</option>';
+                                $selected = ( !empty($_GET['lesson']) && $cat->term_id == $_GET['lesson'] ) ? ' selected="selected"' : '';
+                                echo '<option value="' . $cat->term_id . '"'. $selected .'>' . upFirstLetter($cat->name) .'</option>';
                         }
                     }
                     ?>
