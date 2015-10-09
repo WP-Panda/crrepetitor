@@ -319,7 +319,7 @@
 
     $("#container_image").PictureCut({
         InputOfImageDirectory       : "image",
-        DefaultImageButton          : 'http://sadis5.ru/resources/themes/crrepetitor/assets/img/no-avatar.jpg',
+        DefaultImageButton          : 'http://repetitor.loc/resources/themes/crrepetitor/assets/img/no-avatar.jpg',
         PluginFolderOnServer        : "/jquery.picture.cut/",
         FolderOnServer              : "/uploads/",
         EnableCrop                  : true,

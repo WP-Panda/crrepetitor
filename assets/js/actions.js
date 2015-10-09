@@ -176,7 +176,7 @@
                 // console.log('ГУД'. $response.data.url);
                 //  window.location.replace($response.data.url);
                 // alert($response);
-                // window.location = 'http://sadis5.ru';
+                // window.location = 'http://repetitor.loc';
                 $('#dialoga,.mack').fadeIn();
             }
             else
