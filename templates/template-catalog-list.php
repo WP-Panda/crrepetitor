@@ -51,13 +51,13 @@ $map_url = $panda['podbor_url'] ? esc_url($panda['podbor_url']) : 'javascript:vo
                 $myterms2 = get_terms( array( 'category' ), $args );
                 foreach( $myterms2 as $term2 ){
                     $category_link = get_category_link( $term2->term_id );
-                    echo '<li><a href="' . esc_url( $category_link ) . '">' . $term2->name . '</a><span>(' .  $term2->count . ')</span></li>';
+                    printf('<li><a href="%s?lesson=%s">%s</a><span>(%s)</span></li>',esc_url( $panda['podbor_url'] ),$term2->term_id,$term2->name, $term2->count);
                 }
                 echo '</ul>';
                 echo '</div>';
             }
         } ?>
         <div class="clearfix"></div>
-        <a href="<?php echo $map_url; ?>" class="wihite-button"><?php _e('Посмотреть всех','wp_panda'); ?></a>
+        <a href="<?php echo  esc_url( $panda['podbor_url'] ) ?>" class="wihite-button"><?php _e('Посмотреть всех','wp_panda'); ?></a>
     </div>
 </div>

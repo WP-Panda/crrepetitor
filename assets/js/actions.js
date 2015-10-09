@@ -106,7 +106,6 @@
                 img : $('#container_image').find('img').attr('src')
             };
 
-            // alert($('#container_image').find('img').attr('src'));
             $.post(CrAjAX.ajaxurl, $data, function($response) {
                 if( $response.success )
                 {
@@ -173,10 +172,6 @@
             //console.log($response);
             if( $response.success )
             {
-                // console.log('ГУД'. $response.data.url);
-                //  window.location.replace($response.data.url);
-                // alert($response);
-                // window.location = 'http://repetitor.loc';
                 $('#dialoga,.mack').fadeIn();
             }
             else
