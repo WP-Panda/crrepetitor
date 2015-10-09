@@ -31,13 +31,14 @@ $map_url = $panda['podbor_url'] ? esc_url($panda['podbor_url']) : 'javascript:vo
             <?php echo declOfNum_title($count_posts->publish, array(__('преподователя','wp_panda'), __('преподавателей','wp_panda'), __('преподавателей','wp_panda'))) ?> и <span><?php echo $count ?></span>
             <?php echo declOfNum_title($count, array(__('направления','wp_panda'), __('направлений','wp_panda'), __('направлений','wp_panda'))) ?></div>
 
-        <?php $args = array(
+        <?php
+
+        $args = array(
             'hide_empty' => false,
             'orderby' => 'id',
             'order'=> 'DESC',
             'exclude' => 1,
             'pad_counts'=>true
-
         );
 
         $myterms = get_terms( array( 'category' ), $args );
@@ -51,7 +52,7 @@ $map_url = $panda['podbor_url'] ? esc_url($panda['podbor_url']) : 'javascript:vo
                 $myterms2 = get_terms( array( 'category' ), $args );
                 foreach( $myterms2 as $term2 ){
                     $category_link = get_category_link( $term2->term_id );
-                    printf('<li><a href="%s?lesson=%s">%s</a><span>(%s)</span></li>',esc_url( $panda['podbor_url'] ),$term2->term_id,$term2->name, $term2->count);
+                    printf('<li><a href="%s?subject=%s">%s</a><span>(%s)</span></li>',esc_url( $panda['podbor_url'] ),$term2->term_id,$term2->name, $term2->count);
                 }
                 echo '</ul>';
                 echo '</div>';

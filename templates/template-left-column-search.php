@@ -25,9 +25,10 @@ $city_district = $panda['city_district'] ? $panda['city_district'] : array();
                     $categories = get_categories( $args );
                     if( $categories ){
                         foreach( $categories as $cat ){
-                            if( $cat->category_parent !== 0 )
-                                $selected = ( !empty($_GET['lesson']) && $cat->term_id == $_GET['lesson'] ) ? ' selected="selected"' : '';
-                                echo '<option value="' . $cat->term_id . '"'. $selected .'>' . upFirstLetter($cat->name) .'</option>';
+                            if( (int)$cat->category_parent === 0 )
+                                continue;
+                                $selected = ( !empty($_GET['subject']) && $cat->term_id == $_GET['subject'] ) ? ' selected="selected"' : '';
+                                printf('<option value="%s"%s>%s</option>',$cat->term_id,$selected, upFirstLetter($cat->name));
                         }
                     }
                     ?>
@@ -42,7 +43,8 @@ $city_district = $panda['city_district'] ? $panda['city_district'] : array();
                     if ( !empty($city_district) ) {
                         $n=1;
                         foreach ($city_district as $one=>$key) {
-                            echo '<option value="' . $n . '">' . upFirstLetter($key) . '</option>';
+                            $selected = ( !empty($_GET['district']) && $n == $_GET['district'] ) ? ' selected="selected"' : '';
+                            printf('<option value="%s"%s>%s</option>',$n,$selected, upFirstLetter($key));
                             $n++;
                         }
                     } else {
