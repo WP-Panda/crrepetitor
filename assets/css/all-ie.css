@@ -1,0 +1,11 @@
+@charset "utf-8";
+/* CSS Document */
+
+.clearfix{
+	 *zoom: 1;}
+
+/* display: inline-block for ie */
+.test{
+	zoom:1; /* для ие */
+	*display:inline; /* для ие */
+}
