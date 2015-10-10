@@ -23,7 +23,6 @@ function scroll_comments_callback() {
     foreach($comments as $comment){
         $post_id = $comment->comment_post_ID;
         if( !empty( $id) && ! in_category(array($id),$comment->comment_post_ID ) ) {
-            //  print_r($id);
             continue;
         }
         if( $n < $offset ) {
@@ -123,22 +122,15 @@ function scroll_techers_callback()
 {
 
     check_ajax_referer('cr-special-string', 'security');
-    $part = ! empty( $_COOKIE['arch_visible'] ) && $_COOKIE['arch_visible'] == 'grid' ? 'grid' : 'list';
-    $sort = ! empty( $_COOKIE['arch_sort'] ) ? $_COOKIE["arch_sort"] : '';
+    parse_str(trim($_POST['get'],'?'),$get);
 
+    $part = ! empty( $get['show'] )  ? $get['show'] : 'list';
+    $sort = ! empty( $get['orders'] ) ? $get['orders'] : '';
 
-    parse_str(trim($_POST['geter'],'?'),$get);
-
-    print_r($get);
-
-    $district = $get['district'] && $get['district'] !=='Выберите район' ? esc_sql($get['district']) : '';
-    $location = $get['location'] && $get['location'] !=='all' ? esc_sql($get['location']) : '';
+    $district = !empty($get['district']) && $get['district'] !=='Выберите район' ? esc_sql($get['district']) : '';
+    $location = !empty($get['location']) && $get['location'] !=='all' ? esc_sql($get['location']) : '';
 
     $offset = $_POST['offset'];
-
-    print_r($offset);
-
-
 
     if( ! empty($sort) ) {
         $querys = array('post_type=>post','orderby' => 'meta_value', 'meta_key' => 'prise_60','order' => $sort);
@@ -290,9 +282,6 @@ function scroll_techers_callback()
         }
     }
 
-
-
-print_r($querys);
     $query = new WP_Query( $querys );
     if ( $query->have_posts() ) : $n = 0; while ( $query->have_posts() ) : $query->the_post(); $n++; ?>
         <?php get_template_part( 'templates/template','search-' . $part );
@@ -321,19 +310,166 @@ function order_by_prise_callback()
         parse_str($geter,$get);
     }
 
-
-    $part = ! empty( $get['show'] ) && $get['show'] == 'grid' ? 'grid' : 'list';
+    $part = ! empty( $get['show'] )  ? $get['show'] : 'list';
+    $subject = !empty($get['subject']) && $get['subject'] !=='Выберите предмет' ? $get['subject'] : '';
+    $district = !empty($get['district']) && $get['district'] !=='Выберите район' ? esc_sql($get['district']) : '';
+    $location = !empty($get['location']) && $get['location'] !=='all' ? esc_sql($get['location']) : '';
+    $ek = !empty($get['ek']) ? esc_sql($get['ek']) : '';
+    $sex = !empty($get['pol']) && $get['pol'] !=='all' ? esc_sql($get['pol']) : '';
     $sort = ! empty( $get['orders'] ) ? $get['orders'] : '';
 
-    $array = array('post_type=>post','orderby' => 'meta_value', 'meta_key' => 'prise_60','order' => $sort);
-   // print_r($array);
+    $querys = array();
 
-    if(!empty($_GET['lesson'])) {
-        $category = get_term_by('name', $_GET['lesson'], 'category');
-        $array['category_name']=$category->slug;
+    if( ! empty($sort) ) {
+        $querys['orderby'] = 'meta_value';
+        $querys['meta_key'] = 'prise_60';
+        $querys['order'] = $sort;
     }
 
-    $query = new WP_Query( $array );
+    //предмет
+    if( ! empty($subject) ) {
+        $querys['category__in'] = array($subject);
+    }
+
+    if( empty($subject) && ! empty($_POST['cat'])) {
+        $querys['category__in'] = array($_POST['cat']);
+    }
+
+    //егэ
+    if( ! empty($ek) ) {
+        $querys['tag'] = $ek;
+    }
+
+    $querys ['meta_query'] = array(
+        'relation' => 'AND',
+    );
+
+    //пол
+    if( ! empty($sex) && $sex !=='all' ) {
+        $querys ['meta_query'][] = array(
+            'key' => 'az_teacher_sex',
+            'value' => $sex
+        );
+    }
+
+
+    // место занятий
+    if( ! empty($location) ) {
+
+        if ( $location !== 'skipe') {
+            $querys ['meta_query'][] = array(
+                'key' => 'az_teacher_lesson_location',
+                'value' => $location
+            );
+
+        } else {
+            $querys ['meta_query'][] = array(
+                'key' => 'az_use_skype_teacher',
+                'value' => 1
+            );
+
+        }
+    }
+
+
+    // район
+    if(! empty($district) && $district == 1 ) {
+        $array1 = array(
+            serialize([1 => "1", 2 => "1", 3 => "1", 4 => "1"]),
+            serialize([1 => "1", 2 => '', 3 => '', 4 => '']),
+            serialize([1 => "1", 2 => "1", 3 => '', 4 => "1"]),
+            serialize([1 => "1", 2 => '', 3 => "1", 4 => '']),
+            serialize([1 => "1", 2 => "1", 3 => "1", 4 => '']),
+            serialize([1 => "1", 2 => '', 3 => '', 4 => "1"]),
+            serialize([1 => "1", 2 => '', 3 => "1", 4 => "1"]),
+            serialize([1 => "1", 2 => "1", 3 => '', 4 => ''])
+        );
+
+        $querys ['meta_query']['qu'] = array(
+            'relation' => 'OR'
+        );
+
+        foreach ($array1 as $arr1) {
+            $querys ['meta_query']['qu'][] = array(
+                'key' => 'az_areas_of_the_county5',
+                'value' => $arr1,
+            );
+        }
+    }
+
+    if(! empty($district) && $district == 2 ) {
+        $array2 = array(
+            serialize([1=>"1",2=>"1",3=>"1",4=>"1"]),
+            serialize([1=>'',2=>"1",3=>'',4=>'']),
+            serialize([1=>"1",2=>"1",3=>'',4=>"1"]),
+            serialize([1=>'',2=>"1",3=>"1",4=>'']),
+            serialize([1=>"1",2=>"1",3=>"1",4=>'']),
+            serialize([1=>'',2=>"1",3=>'',4=>"1"]),
+            serialize([1=>'',2=>"1",3=>"1",4=>"1"]),
+            serialize([1=>"1",2=>"1",3=>'',4=>'']),
+            serialize([1=>'',2=>"1",3=>'',4=>"1"])
+        );
+        $querys ['meta_query']['qu'] = array(
+            'relation' => 'OR'
+        );
+
+        foreach ($array2 as $arr1) {
+            $querys ['meta_query']['qu'][] = array(
+                'key' => 'az_areas_of_the_county5',
+                'value' => $arr1,
+            );
+        }
+    }
+
+    if(! empty($district) && $district == 3 ) {
+        $array3 = array(
+            serialize([1=>"1",2=>"1",3=>"1",4=>"1"]),
+            serialize([1=>'',2=>'',3=>"1",4=>'']),
+            serialize([1=>"1",2=>'',3=>"1",4=>"1"]),
+            serialize([1=>'',2=>"1",3=>"1",4=>'']),
+            serialize([1=>"1",2=>"1",3=>"1",4=>'']),
+            serialize([1=>'',2=>'',3=>"1",4=>"1"]),
+            serialize([1=>'',2=>"1",3=>"1",4=>"1"]),
+            serialize([1=>"1",2=>'',3=>"1",4=>'']),
+            serialize([1=>'',2=>'',3=>"1",4=>"1"])
+        );
+        $querys ['meta_query']['qu'] = array(
+            'relation' => 'OR'
+        );
+
+        foreach ($array3 as $arr1) {
+            $querys ['meta_query']['qu'][] = array(
+                'key' => 'az_areas_of_the_county5',
+                'value' => $arr1,
+            );
+        }
+    }
+
+    if(! empty($district) && $district == 4 ) {
+        $array4 = array(
+            serialize([1=>"1",2=>"1",3=>"1",4=>"1"]),
+            serialize([1=>'',2=>'',3=>'',4=>"1"]),
+            serialize([1=>"1",2=>'',3=>"1",4=>"1"]),
+            serialize([1=>'',2=>"1",3=>'',4=>"1"]),
+            serialize([1=>"1",2=>"1",3=>'',4=>"1"]),
+            serialize([1=>'',2=>'',3=>"1",4=>"1"]),
+            serialize([1=>'',2=>"1",3=>"1",4=>"1"]),
+            serialize([1=>"1",2=>'',3=>'',4=>"1"]),
+            serialize([1=>'',2=>'',3=>"1",4=>"1"])
+        );
+        $querys ['meta_query']['qu'] = array(
+            'relation' => 'OR'
+        );
+
+        foreach ($array4 as $arr1) {
+            $querys ['meta_query']['qu'][] = array(
+                'key' => 'az_areas_of_the_county5',
+                'value' => $arr1,
+            );
+        }
+    }
+
+    $query = new WP_Query($querys);
     if ( $query->have_posts() ) : $n = 0; while ( $query->have_posts() ) : $query->the_post(); $n++;
 
         if( ! empty($_GET['district']) && $_GET['district'] !=='Выберите район' ) {
@@ -369,23 +505,167 @@ function order_by_show_callback() {
         parse_str($geter,$get);
     }
 
-
-    $part = ! empty( $get['show'] ) && $get['show'] == 'grid' ? 'grid' : 'list';
+    $part = ! empty( $get['show'] )  ? $get['show'] : 'list';
+    $subject = !empty($get['subject']) && $get['subject'] !=='Выберите предмет' ? $get['subject'] : '';
+    $district = !empty($get['district']) && $get['district'] !=='Выберите район' ? esc_sql($get['district']) : '';
+    $location = !empty($get['location']) && $get['location'] !=='all' ? esc_sql($get['location']) : '';
+    $ek = !empty($get['ek']) ? esc_sql($get['ek']) : '';
+    $sex = !empty($get['pol']) && $get['pol'] !=='all' ? esc_sql($get['pol']) : '';
     $sort = ! empty( $get['orders'] ) ? $get['orders'] : '';
 
+    $querys = array();
+
     if( ! empty($sort) ) {
-        $array = array('post_type=>post','orderby' => 'meta_value', 'meta_key' => 'prise_60','order' => $sort);
-    } else {
-        $array = array('post_type=>post');
+        $querys['orderby'] = 'meta_value';
+        $querys['meta_key'] = 'prise_60';
+        $querys['order'] = $sort;
+    }
+
+    //предмет
+    if( ! empty($subject) ) {
+        $querys['category__in'] = array($subject);
+    }
+
+    if( empty($subject) && ! empty($_POST['cat'])) {
+        $querys['category__in'] = array($_POST['cat']);
+    }
+
+    //егэ
+    if( ! empty($ek) ) {
+        $querys['tag'] = $ek;
+    }
+
+    $querys ['meta_query'] = array(
+        'relation' => 'AND',
+    );
+
+    //пол
+    if( ! empty($sex) && $sex !=='all' ) {
+        $querys ['meta_query'][] = array(
+            'key' => 'az_teacher_sex',
+            'value' => $sex
+        );
     }
 
 
-    if(!empty($get['lesson'])) {
-        $category = get_term_by('name', $get['lesson'], 'category');
-        $array['category_name']=$category->slug;
+    // место занятий
+    if( ! empty($location) ) {
+
+        if ( $location !== 'skipe') {
+            $querys ['meta_query'][] = array(
+                'key' => 'az_teacher_lesson_location',
+                'value' => $location
+            );
+
+        } else {
+            $querys ['meta_query'][] = array(
+                'key' => 'az_use_skype_teacher',
+                'value' => 1
+            );
+
+        }
     }
 
-    $query = new WP_Query( $array );
+
+    // район
+    if(! empty($district) && $district == 1 ) {
+        $array1 = array(
+            serialize([1 => "1", 2 => "1", 3 => "1", 4 => "1"]),
+            serialize([1 => "1", 2 => '', 3 => '', 4 => '']),
+            serialize([1 => "1", 2 => "1", 3 => '', 4 => "1"]),
+            serialize([1 => "1", 2 => '', 3 => "1", 4 => '']),
+            serialize([1 => "1", 2 => "1", 3 => "1", 4 => '']),
+            serialize([1 => "1", 2 => '', 3 => '', 4 => "1"]),
+            serialize([1 => "1", 2 => '', 3 => "1", 4 => "1"]),
+            serialize([1 => "1", 2 => "1", 3 => '', 4 => ''])
+        );
+
+        $querys ['meta_query']['qu'] = array(
+            'relation' => 'OR'
+        );
+
+        foreach ($array1 as $arr1) {
+            $querys ['meta_query']['qu'][] = array(
+                'key' => 'az_areas_of_the_county5',
+                'value' => $arr1,
+            );
+        }
+    }
+
+    if(! empty($district) && $district == 2 ) {
+        $array2 = array(
+            serialize([1=>"1",2=>"1",3=>"1",4=>"1"]),
+            serialize([1=>'',2=>"1",3=>'',4=>'']),
+            serialize([1=>"1",2=>"1",3=>'',4=>"1"]),
+            serialize([1=>'',2=>"1",3=>"1",4=>'']),
+            serialize([1=>"1",2=>"1",3=>"1",4=>'']),
+            serialize([1=>'',2=>"1",3=>'',4=>"1"]),
+            serialize([1=>'',2=>"1",3=>"1",4=>"1"]),
+            serialize([1=>"1",2=>"1",3=>'',4=>'']),
+            serialize([1=>'',2=>"1",3=>'',4=>"1"])
+        );
+        $querys ['meta_query']['qu'] = array(
+            'relation' => 'OR'
+        );
+
+        foreach ($array2 as $arr1) {
+            $querys ['meta_query']['qu'][] = array(
+                'key' => 'az_areas_of_the_county5',
+                'value' => $arr1,
+            );
+        }
+    }
+
+    if(! empty($district) && $district == 3 ) {
+        $array3 = array(
+            serialize([1=>"1",2=>"1",3=>"1",4=>"1"]),
+            serialize([1=>'',2=>'',3=>"1",4=>'']),
+            serialize([1=>"1",2=>'',3=>"1",4=>"1"]),
+            serialize([1=>'',2=>"1",3=>"1",4=>'']),
+            serialize([1=>"1",2=>"1",3=>"1",4=>'']),
+            serialize([1=>'',2=>'',3=>"1",4=>"1"]),
+            serialize([1=>'',2=>"1",3=>"1",4=>"1"]),
+            serialize([1=>"1",2=>'',3=>"1",4=>'']),
+            serialize([1=>'',2=>'',3=>"1",4=>"1"])
+        );
+        $querys ['meta_query']['qu'] = array(
+            'relation' => 'OR'
+        );
+
+        foreach ($array3 as $arr1) {
+            $querys ['meta_query']['qu'][] = array(
+                'key' => 'az_areas_of_the_county5',
+                'value' => $arr1,
+            );
+        }
+    }
+
+    if(! empty($district) && $district == 4 ) {
+        $array4 = array(
+            serialize([1=>"1",2=>"1",3=>"1",4=>"1"]),
+            serialize([1=>'',2=>'',3=>'',4=>"1"]),
+            serialize([1=>"1",2=>'',3=>"1",4=>"1"]),
+            serialize([1=>'',2=>"1",3=>'',4=>"1"]),
+            serialize([1=>"1",2=>"1",3=>'',4=>"1"]),
+            serialize([1=>'',2=>'',3=>"1",4=>"1"]),
+            serialize([1=>'',2=>"1",3=>"1",4=>"1"]),
+            serialize([1=>"1",2=>'',3=>'',4=>"1"]),
+            serialize([1=>'',2=>'',3=>"1",4=>"1"])
+        );
+        $querys ['meta_query']['qu'] = array(
+            'relation' => 'OR'
+        );
+
+        foreach ($array4 as $arr1) {
+            $querys ['meta_query']['qu'][] = array(
+                'key' => 'az_areas_of_the_county5',
+                'value' => $arr1,
+            );
+        }
+    }
+
+    $query = new WP_Query($querys);
+
     if ( $query->have_posts() ) : $n = 0; while ( $query->have_posts() ) : $query->the_post(); $n++;
 
         if( ! empty($get['district']) && $get['district'] !=='Выберите район' ) {

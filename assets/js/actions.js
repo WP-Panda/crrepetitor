@@ -105,14 +105,11 @@
             $.post(CrAjAX.ajaxurl, $data, function($response) {
                 if( $response.success )
                 {
-                    //console.log($response.data.url);
                     window.location = $response.data.url;
                 }
                 else
                 {
-                    //alert('Ошибка' + $response.data);
                     $.each($response.data, function(index, value){
-
                         $('#' + value).addClass('eror');
                         $('#' + value).after('<div class="input-eror">Это поле обязательно для заполнения</div>');
                     });
@@ -269,7 +266,7 @@
         var $data = {
             action: 'left_search',
             security : CrAjAX.security,
-            val: $('#lefter-search').serialize()
+            get: decodeURIComponent(window.location.search.substring(1))
         };
         $.post(CrAjAX.ajaxurl, $data, function($response) {
             $('#appener').html($response);
@@ -286,7 +283,6 @@
     /**
      * Подбор заявки
      */
-
     $(document).on('change','#lefter-search-order  > *',function(){
 
         $el = $(this).attr('class');
@@ -297,9 +293,7 @@
             $name = $(this).find('input:checked').attr('name');
             $val = $(this).find('input:checked').val();
         }
-
         newUrl( $name, $val );
-
         $('#main-loader').fadeIn();
         var $data = {
             action: 'left_search_order',
@@ -667,7 +661,7 @@
             action   : $action,
             offset   : $offset,
             flag     : $flag,
-            geter : $val,
+            get : $val,
             cat : $cat
         };
         $.post(CrAjAX.ajaxurl, $data, function ($response) {
@@ -696,7 +690,6 @@
     /**
      * Прокрутка архива репетиторов
      */
-
     var $offset = 2, $start = true,$end=false;
     $(window).scroll(function() {
         //if(!$('.serch-item2').length || !$('.serch-item2').length) return false;
@@ -733,7 +726,7 @@
 
 
     /**
-     * ПРокрутка страниыф подбор репетиторов
+     * Пpокрутка страниы подбор репетиторов
      */
     $(window).scroll(function() {
 
@@ -749,7 +742,7 @@
             $('#appener').append('<div id="post-load"></div>');
             $('#post-load').fadeIn();
             setTimeout(function() {
-                $get = window.location.search;
+                $get = decodeURIComponent(window.location.search.substring(1));
                 $('#post-load').remove();
                 getData($offset,'#appener','scroll_techers',$get);
                 $offset ++;

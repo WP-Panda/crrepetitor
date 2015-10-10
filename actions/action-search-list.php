@@ -5,19 +5,25 @@ add_action( 'wp_ajax_nopriv_left_search', 'left_search_callback' );
 function left_search_callback(){
 
     check_ajax_referer( 'cr-special-string', 'security' );
-    $val = $_POST['val'];
-    parse_str($val , $vals );
-    $part = ! empty( $_COOKIE['arch_visible'] ) && $_COOKIE['arch_visible'] == 'grid' ? 'grid' : 'list';
-    $subject = $vals['subject'] && $vals['subject'] !=='Выберите предмет' ? $vals['subject'] : '';
+    $getter = $_POST['get'];
+    parse_str($getter , $get );
 
-
-    $district = $vals['district'] && $vals['district'] !=='Выберите район' ? esc_sql($vals['district']) : '';
-    $location = $vals['location'] && $vals['location'] !=='all' ? esc_sql($vals['location']) : '';
-    $ek = !empty($vals['ek']) ? esc_sql($vals['ek']) : '';
-    $sex = !empty($vals['pol']) && $vals['pol'] !=='all' ? esc_sql($vals['pol']) : '';
-
+    $part = ! empty( $get['show'] )  ? $get['show'] : 'list';
+    $subject = !empty($get['subject']) && $get['subject'] !=='Выберите предмет' ? $get['subject'] : '';
+    $district = !empty($get['district']) && $get['district'] !=='Выберите район' ? esc_sql($get['district']) : '';
+    $location = !empty($get['location']) && $get['location'] !=='all' ? esc_sql($get['location']) : '';
+    $ek = !empty($get['ek']) ? esc_sql($get['ek']) : '';
+    $sex = !empty($get['pol']) && $get['pol'] !=='all' ? esc_sql($get['pol']) : '';
+    $sort = ! empty( $get['orders'] ) ? $get['orders'] : '';
 
     $querys = array();
+
+    if( ! empty($sort) ) {
+        $querys['orderby'] = 'meta_value';
+        $querys['meta_key'] = 'prise_60';
+        $querys['order'] = $sort;
+    }
+
     //предмет
     if( ! empty($subject) ) {
         $querys['category__in'] = array($subject);

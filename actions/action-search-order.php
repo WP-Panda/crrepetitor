@@ -63,7 +63,6 @@ function left_search_order_callback()
             }
 
             if (!empty($location)) {
-                //print_r($location);
 
                 // if ( $location !== 'skipe') {
                 $az_teacher_lesson_location = get_post_meta($post->ID, 'az_teacher_lesson_location', true);
