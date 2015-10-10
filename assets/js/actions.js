@@ -808,6 +808,15 @@
         });
     });
 
+    /**
+     * Переход из архива на поиск
+     */
+    $(document).on('change','#lefter-search-archive> *',function(){
+        var $get = $('#lefter-search-archive').serialize();
+        
+        var loc = window.location;
+        window.location.href = loc.protocol + '//' + loc.host + '/podbor-repetitora?' + $get;
+    });
 
 
 })(jQuery);
