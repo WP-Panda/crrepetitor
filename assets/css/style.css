@@ -3384,3 +3384,7 @@ li.disabled {
 .top-select-body .serch-select .jq-selectbox__dropdown {
      overflow: visible;
  }
+
+#fixer{
+    opacity: 0;
+}

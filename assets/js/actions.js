@@ -813,10 +813,36 @@
      */
     $(document).on('change','#lefter-search-archive> *',function(){
         var $get = $('#lefter-search-archive').serialize();
-        
         var loc = window.location;
         window.location.href = loc.protocol + '//' + loc.host + '/podbor-repetitora?' + $get;
     });
 
+    /**
+     * Боковой сайдбар
+     */
+
+    var menuHeight = $("#fixer").height();
+    var tops = $("#fixer").offset();
+    var width = $(".search-filtr").width();
+    var topss = tops.top
+
+    function fixerStop(){
+        var top  = $(document).scrollTop();
+
+        if ( top > topss) {
+            $('#fixer').css({'position':'fixed','top':50,'width':width+51,'opacity':1});
+            return false;
+        }else {
+            $('#fixer').css({'position':'relative','top':0});
+            //$('.fase').animate({ 'height' : logoHeight , 'margin-top': '20px' },{queue:false, duragon : 150});
+            return false;
+        }
+    }
+
+    $(document).scroll( function(){
+        fixerStop();
+    } );
+
+    fixerStop();
 
 })(jQuery);

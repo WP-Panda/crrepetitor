@@ -87,7 +87,7 @@ $city_district = $panda['city_district'] ? $panda['city_district'] : array();
         </form>
 
     </div>
-    <div id="fixed" class="hidden-nodesktop">
+    <div id="fixer" class="hidden-nodesktop">
         <form id="fast-fast-search">
             <div class="filtr-form">
                 <div class="ff-title"><?php _e('Бесплатная помощь  в подборе','wp_panda'); ?></div>
