@@ -770,10 +770,12 @@
     $(document).on('click','.sort-left a', function(){
 
         $('#main-loader').fadeIn();
-        $.cookie('arch_sort', $(this).data('sort'), { expires: 365, path: '/' });
+        newUrl( 'orders', $(this).data('sort') );
         var $data = {
             security: CrAjAX.security,
-            action   : 'order_by_prise'
+            action   : 'order_by_prise',
+            'get' : decodeURIComponent(window.location.search.substring(1))
+
         };
 
         $.post(CrAjAX.ajaxurl, $data, function ($response) {
@@ -784,8 +786,6 @@
                 $('.resp'). fadeIn();
                 OddEven()
             }, 250);
-
-
         });
 
     });
@@ -793,11 +793,9 @@
     /**
      * Переключение вида
      */
-
     $(document).on('click','.sort-right a',function () {
         $('#main-loader').fadeIn();
         newUrl( 'show', $(this).data('show') );
-        //$.cookie('arch_visible',  $(this).data('show'), { expires: 365, path: '/' });
 
         var $data = {
             security: CrAjAX.security,
@@ -814,12 +812,7 @@
                // $('.resp'). fadeIn();
                 $('#main-loader').fadeOut();
             }, 250);
-
-
         });
-
-
-
     });
 
 

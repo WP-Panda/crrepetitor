@@ -305,6 +305,9 @@ print_r($querys);
 }
 
 
+/**
+ * Смена сортировки
+ */
 
 add_action( 'wp_ajax_order_by_prise', 'order_by_prise_callback' );
 add_action( 'wp_ajax_nopriv_order_by_prise', 'order_by_prise_callback' );
@@ -313,8 +316,14 @@ function order_by_prise_callback()
 {
 
     check_ajax_referer('cr-special-string', 'security');
-    $part = ! empty( $_COOKIE['arch_visible'] ) && $_COOKIE['arch_visible'] == 'grid' ? 'grid' : 'list';
-    $sort = $_COOKIE['arch_sort'];
+    $geter = $_POST['get'] ?  $_POST['get'] : '';
+    if(!empty($geter)) {
+        parse_str($geter,$get);
+    }
+
+
+    $part = ! empty( $get['show'] ) && $get['show'] == 'grid' ? 'grid' : 'list';
+    $sort = ! empty( $get['orders'] ) ? $get['orders'] : '';
 
     $array = array('post_type=>post','orderby' => 'meta_value', 'meta_key' => 'prise_60','order' => $sort);
    // print_r($array);
@@ -362,9 +371,7 @@ function order_by_show_callback() {
 
 
     $part = ! empty( $get['show'] ) && $get['show'] == 'grid' ? 'grid' : 'list';
-
-
-    $sort = ! empty( $_COOKIE['arch_sort'] ) ? $_COOKIE["arch_sort"] : '';
+    $sort = ! empty( $get['orders'] ) ? $get['orders'] : '';
 
     if( ! empty($sort) ) {
         $array = array('post_type=>post','orderby' => 'meta_value', 'meta_key' => 'prise_60','order' => $sort);
@@ -372,8 +379,6 @@ function order_by_show_callback() {
         $array = array('post_type=>post');
     }
 
-
-    // print_r($array);
 
     if(!empty($get['lesson'])) {
         $category = get_term_by('name', $get['lesson'], 'category');
