@@ -19,7 +19,7 @@ get_header(); ?>
                 <div class="serch-right-colum" id="filtr-result">
                     <?php get_template_part( 'templates/template','search-sort-block' ); ?>
                     <?php
-                    $part  = ! empty( $_GET['arch_visible'] ) && $_GET['arch_visible'] == 'grid' ? 'grid' : 'list';
+                    $part  = ! empty( $_GET['show'] ) && $_GET['show'] == 'grid' ? 'grid' : 'list';
                     $num =  ! empty( $_GET['arch_visible'] ) && $_GET['arch_visible'] == 'grid' ? '2' : '1';
 
 

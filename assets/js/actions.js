@@ -63,22 +63,18 @@
         $(this).removeClass('eror');
     });
 
-
     function shake(div){
         var interval = 100;
         var distance = 10;
         var times = 4;
-
         $(div).css('position','relative');
 
         for(var iter=0;iter<(times+1);iter++){
             $(div).animate({
                 left:((iter%2==0 ? distance : distance*-1))
             },interval);
-        }//for
-
+        }
         $(div).animate({ left: 0},interval);
-
     }
 
     /**
@@ -132,10 +128,6 @@
 
 
     });
-
-    /**
-     * Форма регистрайии шаг 2
-     */
 
     /**
      * Добавить опыт работы
@@ -219,10 +211,11 @@
 
     });
 
+
+
     /**
      * Поиск по карте
      */
-
     $(document).on('click','#search-mapper',function(e){
         e.preventDefault();
         $('#main-loader').fadeIn();
@@ -235,7 +228,6 @@
             security : CrAjAX.security,
             val: $val
         };
-
         $.post(CrAjAX.ajaxurl, $data, function($response) {
             $('#YMapsID').empty();
             setTimeout(function(){
@@ -804,11 +796,14 @@
 
     $(document).on('click','.sort-right a',function () {
         $('#main-loader').fadeIn();
-        $.cookie('arch_visible',  $(this).data('show'), { expires: 365, path: '/' });
+        newUrl( 'show', $(this).data('show') );
+        //$.cookie('arch_visible',  $(this).data('show'), { expires: 365, path: '/' });
 
         var $data = {
             security: CrAjAX.security,
-            action   : 'order_by_show'
+            action   : 'order_by_show',
+            'get' : decodeURIComponent(window.location.search.substring(1))
+
         };
 
         $.post(CrAjAX.ajaxurl, $data, function ($response) {

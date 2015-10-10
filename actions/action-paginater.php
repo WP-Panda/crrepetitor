@@ -345,17 +345,25 @@ function order_by_prise_callback()
 
 
 /**
- * kbcn uhbl
+ * Cмена вида
  */
 
 add_action( 'wp_ajax_order_by_show', 'order_by_show_callback' );
 add_action( 'wp_ajax_nopriv_order_by_show', 'order_by_show_callback' );
 
-function order_by_show_callback()
-{
+function order_by_show_callback() {
 
     check_ajax_referer('cr-special-string', 'security');
-    $part = ! empty( $_COOKIE['arch_visible'] ) && $_COOKIE['arch_visible'] == 'grid' ? 'grid' : 'list';
+
+    $geter = $_POST['get'] ?  $_POST['get'] : '';
+    if(!empty($geter)) {
+        parse_str($geter,$get);
+    }
+
+
+    $part = ! empty( $get['show'] ) && $get['show'] == 'grid' ? 'grid' : 'list';
+
+
     $sort = ! empty( $_COOKIE['arch_sort'] ) ? $_COOKIE["arch_sort"] : '';
 
     if( ! empty($sort) ) {
@@ -367,17 +375,17 @@ function order_by_show_callback()
 
     // print_r($array);
 
-    if(!empty($_GET['lesson'])) {
-        $category = get_term_by('name', $_GET['lesson'], 'category');
+    if(!empty($get['lesson'])) {
+        $category = get_term_by('name', $get['lesson'], 'category');
         $array['category_name']=$category->slug;
     }
 
     $query = new WP_Query( $array );
     if ( $query->have_posts() ) : $n = 0; while ( $query->have_posts() ) : $query->the_post(); $n++;
 
-        if( ! empty($_GET['district']) && $_GET['district'] !=='Выберите район' ) {
+        if( ! empty($get['district']) && $get['district'] !=='Выберите район' ) {
             $az_areas_of_the_county5 = get_post_meta($post->ID,'az_areas_of_the_county5',true);
-            if( $az_areas_of_the_county5[$_GET['district']] != 1 )
+            if( $az_areas_of_the_county5[$get['district']] != 1 )
                 continue;
         }
 

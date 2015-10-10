@@ -596,13 +596,17 @@ function add_views_column( $defaults ){
 // заполняем колонку данными
 add_filter('manage_post_posts_custom_column', 'fill_views_column', 5, 2); // wp-admin/includes/class-wp-posts-list-table.php
 function fill_views_column($column_name, $post_id) {
-    if( $column_name == 'phone' )
-        $phone = get_post_meta( $post_id, 'az_phone', true );
-    echo  $phone;
+    if( $column_name == 'phone' ) {
+        $phone = get_post_meta($post_id, 'az_phone', true);
+        if($phone)
+            echo $phone;
+    }
 
-    if( $column_name == 'email' )
-        $email = get_post_meta( $post_id, 'az_email', true );
-    echo $email;
+    if( $column_name == 'email' ) {
+        $email = get_post_meta($post_id, 'az_email', true);
+        if($email)
+        echo $email;
+    }
 
 
 }
