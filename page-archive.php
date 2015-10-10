@@ -27,6 +27,20 @@ get_header(); ?>
 
                             $part = ! empty( $_GET['show'] )  ? $_GET['show'] : 'list';
                             $subject = !empty($_GET['subject']) && $_GET['subject'] !=='Выберите предмет' ? $_GET['subject'] : '';
+
+                            if( !empty($subject) && (int)$subject == '' ) {
+                                $subj = get_term_by('name',$subject,'category');
+                                $subject = $subj->term_id; ?>
+                                <script>
+                                    function newUrl(c,d){for(var a={},e=location.search.substring(1),f=/([^&=]+)=([^&]*)/g,b;b=f.exec(e);)a[decodeURIComponent(b[1])]=decodeURIComponent(b[2]);a[c]=d;history.pushState(null,null,location.pathname+"?"+$.param(a))};
+                                    newUrl('subject',<?php echo $subject ?>);
+                                </script>
+                            <?php
+                            }
+
+
+
+
                             $district = !empty($_GET['district']) && $_GET['district'] !=='Выберите район' ? esc_sql($_GET['district']) : '';
                             $location = !empty($_GET['location']) && $_GET['location'] !=='all' ? esc_sql($_GET['location']) : '';
                             $ek = !empty($_GET['ek']) ? esc_sql($_GET['ek']) : '';

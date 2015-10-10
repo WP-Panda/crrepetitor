@@ -9,8 +9,8 @@
     <div class="top-select-title">Удобный поиск репетиторов в <?php echo $city; ?></div>
     <div class="top-select-body">
         <span>Выберите своего преподавателя прямо сейчас:</span>
-        <form action="<?php echo $panda['podbor_url']; ?>" method="post">
-        <input type="text" name="lesson" id="compliter" placeholder="Интересующий предмет">
+        <form action="<?php echo $panda['podbor_url']; ?>" method="get">
+        <input type="text" name="subject" id="compliter" placeholder="Интересующий предмет">
 
         <div class="serch-select">
             <select name="district" data-placeholder="Выберите район">

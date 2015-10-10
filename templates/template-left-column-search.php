@@ -27,7 +27,17 @@ $city_district = $panda['city_district'] ? $panda['city_district'] : array();
                         foreach( $categories as $cat ){
                             if( (int)$cat->category_parent === 0 )
                                 continue;
-                                $selected = ( !empty($_GET['subject']) && $cat->term_id == $_GET['subject'] ) ? ' selected="selected"' : '';
+                            $subject = !empty($_GET['subject']) ? $_GET['subject'] : '';
+                                if( !empty($subject) && (int)$subject == '' ) {
+                                    $subj = get_term_by('name',$subject,'category');
+                                    $subject = $subj->term_id; ?>
+                                    <script>
+                                        function newUrl(c,d){for(var a={},e=location.search.substring(1),f=/([^&=]+)=([^&]*)/g,b;b=f.exec(e);)a[decodeURIComponent(b[1])]=decodeURIComponent(b[2]);a[c]=d;history.pushState(null,null,location.pathname+"?"+$.param(a))};
+                                        newUrl('subject',<?php echo $subject ?>);
+                                    </script>
+                                <?php
+                                }
+                                $selected = ( !empty($subject) && $cat->term_id == $subject ) ? ' selected="selected"' : '';
                                 printf('<option value="%s"%s>%s</option>',$cat->term_id,$selected, upFirstLetter($cat->name));
                         }
                     }
